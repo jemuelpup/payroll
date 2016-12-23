@@ -1,0 +1,25 @@
+.dn{
+	display: none;
+}
+.incomeMgmt,
+.deductionMgmt{
+	border: 1px solid #000;
+	margin-top: 10px;
+	padding: 10px 20px;
+}
+
+#earning .form-control,
+#deduction .form-control {
+	height: 27px;
+	padding: 4px 12px;
+}
+#earning .form-group,
+#deduction .form-group {
+	margin-bottom: 5px;
+}
+.mr-5{
+	margin-right: 5px;
+}
+.mt-20{
+	margin-top: 20px;
+}
