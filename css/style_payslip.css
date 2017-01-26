@@ -1,0 +1,92 @@
+body {
+	font-size: 12px;
+	font-family: Arial;
+}
+.innerWrap {
+	width: 1200px;
+	margin: 15px auto;
+}
+table {
+	width: 100%;
+}
+tr{
+	height: 20px;
+}
+.employee_info th {
+	width: 10%;
+}
+.w20 {
+	width: 40%;
+}
+.txt_bold {
+	font-weight: bold;
+}
+.p_confidential {
+	color: #FF0000;
+	font-weight: bold;
+	font-style: italic;
+	margin-bottom: 10px;
+}
+.infoArea {
+	margin-bottom: 18px;
+}
+.ovh {
+	overflow: hidden;
+}
+.fl {
+	float: left;
+}
+.earnings {
+	margin-bottom: 6px;
+	width: 50%;
+}
+.totalEarnings {
+	height: 30px;
+}
+.totalDeductions {
+	height: 204px;
+	vertical-align: bottom;
+}
+.YTD {
+	margin: 20px 0 10px 0;
+}
+.netPay01 {
+	height: 41px;
+	vertical-align: bottom;
+}
+.red {
+	color: #FF0000;
+}
+.leaves {
+	display: table-cell;
+	border-collapse: collapse;
+}
+.leaves th,.leaves td{
+	border: 1px solid #000;
+	text-align: center
+}
+.w50 {
+	width: 110px;
+}
+.w30 {
+	width: 90px;
+}
+.netpay {
+	padding-top: 10px;
+}
+.tableSign {
+	overflow: hidden;
+	width: 750px;
+	margin: 50px auto 0;
+}
+.sign {
+	float: right;
+	width: 250px;
+}
+.underline {
+	border-top: 1px solid #000;
+	padding-top: 5px;
+}
+.infotxt {
+	margin-top: 5px;
+}

@@ -1,0 +1,11 @@
+name -> first_name ,middle_name ,last_name
+employeeNum -> emp_no
+division -> division_id
+client
+salary -> monthly_rate
+civilStatus -> 	civil_status
+dependent -> dependent
+active -> user_status
+hire_date
+regularization_date
+employmentStatus - employmentStatus : NEW

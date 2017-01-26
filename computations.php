@@ -1,40 +1,252 @@
 <?php
 require('connect.php');
 
+//dynamicInput($conn);
+
+/***********************************************************
+* Call this function after you record the data of the employees
+************************************************************/
+//dynamicInput($conn,'2017-01-31');
+/***********************************************
+Editting function Done
+***********************************************/
+function dynamicInput($conn,$cutOffDate){
+	$sql = "SELECT user_id as `id`, `hire_date`, `regularization_date`, `employmentStatus` FROM `tbl_user` WHERE 1";
+	$result = $conn->query($sql);
+	if ($result->num_rows> 0) {
+		while($row = $result->fetch_assoc()) {
+			$id = $row["id"];
+			$hire_date = $row["hire_date"];
+			$regularization_date = $row["regularization_date"];
+			$employmentStatus = $row["employmentStatus"];
+			$leaveEarned = 0;
+			
+			$leaveEarned = insertLeaveData($id,$hire_date,$regularization_date,$employmentStatus,$cutOffDate);
+			
+			$sql = "INSERT INTO `tbl_leave_count`(`leave_user_id`, `leave_id`, `leave_earned`) VALUES ($id,1,$leaveEarned) ON DUPLICATE KEY UPDATE `leave_user_id`=$id,`leave_id`=1,`leave_earned`=$leaveEarned"; // for vacation leave
+			$conn->query($sql);
+			$sql = "INSERT INTO `tbl_leave_count`(`leave_user_id`, `leave_id`, `leave_earned`) VALUES ($id,2,$leaveEarned) ON DUPLICATE KEY UPDATE `leave_user_id`=$id,`leave_id`=2,`leave_earned`=$leaveEarned"; // for sickLeave
+			$conn->query($sql);
+		}
+	}
+}
+/********************************************************
+* This function records the leave earned by the employee
+********************************************************/
+function insertLeaveData($empID,$empHiredDate,$empRegularizationDate,$employmentStatus,$cutOffDate){
+	$regularEmployee = 1;
+	$leaveAccumulated = 0;
+	$availedLeavePerCutoff = 1.25; // depends on whatever you want
+	$availedLeavePerCutoff = 0.625; // depends on whatever you want
+	$cutoffLeaveEarned = 0;
+	
+	
+//	$currentDate = time();
+	$currentDate = strtotime($cutOffDate);
+	$currentMonth = date('m', $currentDate);
+	$currentYear = date('Y', $currentDate);
+	$currentDay = date('d', $currentDate);
+	
+	$hiredDate = strtotime($empHiredDate);// changable - must be dynamic
+	$hiredYear = date('Y', $hiredDate);
+	
+	$regularizationDate = strtotime($empRegularizationDate);// changable - must be dynamic
+	$regularizationYear = date('Y', $regularizationDate);
+	
+	$dateDiffHiredToCurrent = $currentDate - $hiredDate;
+	$dateDiffRegularizationToCurrent = $currentDate - $regularizationDate;
+	
+	$daysHired = ($dateDiffHiredToCurrent / 86400);
+	$monthsHired = ($daysHired/30.417);
+	$yearsHired = floor($monthsHired/12);
+	
+	$daysRegularized = ($dateDiffRegularizationToCurrent / 86400);
+	$monthsRegularized = ($daysRegularized/30.417);
+	$yearsRegularized = floor($monthsRegularized/12);
+	
+	
+//	echo "months $monthsRegularized -";
+	
+//	echo $yearsHired;
+	$employeeIsRegular = true;
+	
+	$addedLeave = 0;//number of months from hired date to december of the past year from current
+	$deductedLeave = 0;
+	$sql = "";
+	// compute the sl/vl to be payed to the employee
+	// delete date accumulated. Replace by the value below
+	$cutoffLeaveEarned = $currentMonth*2;
+	if($currentDay>=1 and $currentDay<=15){
+		$cutoffLeaveEarned -= 1;
+	}
+	
+	$cutoffLeaveEarned *= $availedLeavePerCutoff;
+	
+	if($employmentStatus == $regularEmployee){ // if employee is regular //  FIX THIS. It can cause error...
+		if($currentYear==$regularizationYear){// ex 2016 regularization; 2016 current year
+			if($hiredYear<$regularizationYear){// ex: 2015-hired date; 2016-regularization date; 2016 current year;
+				$lastYearDecember = strtotime(($regularizationYear-1).'-12-31');
+				$dateDiffHiredToDecLastYear = round(($lastYearDecember - $hiredDate)/ 86400);// returns day
+				$addedLeave = round($dateDiffHiredToDecLastYear/15)*$availedLeavePerCutoff; // leave earned to be added
+				return $cutoffLeaveEarned + $addedLeave;
+			}
+			else{// ex: 2016-hired date; 2016-regularization date; 2016 current year;
+				$thisYearJanuary = strtotime(($regularizationYear).'-01-01');
+				$dateDiffHiredToDecLastYear = round(($hiredDate - $thisYearJanuary)/ 86400);// returns day
+				$deductedLeave = round($dateDiffHiredToDecLastYear/15)*$availedLeavePerCutoff; // leave earned to be deducted
+				return $cutoffLeaveEarned - $deductedLeave;
+			}
+		}
+		else{// ex 2015 regularization; 2016 current year // follow forrmula: leaveEarned = monthCount*1.25
+//			return $cutoffLeaveEarned;// accumulating leave
+			return 15;// leave earned is automatically 15
+		}
+	}
+	else{// if employee not regular, get the leave accumulated
+		$dateDiffHiredDateToCurrDate = round(($currentDate - $hiredDate)/ 86400);// returns day
+		$leaveAccumulated = round($dateDiffHiredDateToCurrDate/15)*$availedLeavePerCutoff;// add this to leave accumulated
+		return $leaveAccumulated;
+	}
+	return 0;
+}
+
+function getIncomeFields($conn){
+	$sql = "SELECT `id`, `name`, `taxable`, `active`, `inModal`, `placeholder` FROM `earning_tbl` where deleted = 0 AND `name` <> 'base salary';";
+	$result = $conn->query($sql);//execute query
+	echo "
+	<table class='table table-striped earning-data-table'>
+		<tr>
+			<th>Name</th>
+			<th>Placeholder Num</th>
+			<th>Taxable</th>
+			<th>Active</th>
+			<th>InModal</th>
+			<th>Change</th>
+			<th>Delete</th>
+		</tr>
+		";
+	if ($result->num_rows> 0) {
+		while($row = $result->fetch_assoc()) {
+			$id = $row["id"];
+			$name = $row["name"];
+			$placeholder = $row["placeholder"];
+			$taxable = isChecked($row["taxable"]);
+			$active = isChecked($row["active"]);
+			$inModal = isChecked($row["inModal"]);
+			$fieldName = str_replace(' ', '_', $name);
+			
+			echo "
+			<tr class='field-$id';>
+				<td><input type='text' class='fieldName' name='$fieldName' value='$name'></td>
+				<td><input type='text' class='fieldPlaceHolder' value='$placeholder'></td>
+				<td><input type='checkbox' class='fieldTaxable' $taxable></td>
+				<td><input type='checkbox' class='fieldActive' $active></td>
+				<td><input type='checkbox' class='fieldInModal' $inModal></td>
+				<td><button class='change'>Change</button></td>
+				<td><button class='delete'>Delete</button></td>
+			</tr>
+			
+			";
+				
+		}
+	}
+	echo "</table>";
+}
+function getDeductionFields($conn){
+	$sql = "SELECT `id`, `name`, `active`, `placeholder`, `inModal`, `taxDeductable` FROM `deduction_tbl` where deleted = 0 and name<>'sss' and name<>'phic' and name<>'hdmf'  and name<>'income tax'";
+	$result = $conn->query($sql);//execute query
+	echo "
+	<table class='table table-striped deduction-data-table'>
+		<tr>
+			<th>Name</th>
+			<th>Placeholder Num</th>
+			<th>Tax deductable</th>
+			<th>Active</th>
+			<th>InModal</th>
+			<th>Change</th>
+			<th>Delete</th>
+		</tr>
+		";
+	if ($result->num_rows> 0) {
+		while($row = $result->fetch_assoc()) {
+			$id = $row["id"];
+			$name = $row["name"];
+			$placeholder = $row["placeholder"];
+			$taxDeductable = isChecked($row["taxDeductable"]);
+			$active = isChecked($row["active"]);
+			$inModal = isChecked($row["inModal"]);
+			$fieldName = str_replace(' ', '_', $name);
+
+			echo "
+			<tr class='field-$id';>
+				<td><input type='text' class='fieldName' name='$fieldName' value='$name'></td>
+				<td><input type='text' class='fieldPlaceHolder' value='$placeholder'></td>
+				<td><input type='checkbox' class='fieldTaxDeductable' $taxDeductable></td>
+				<td><input type='checkbox' class='fieldActive' $active></td>
+				<td><input type='checkbox' class='fieldInModal' $inModal></td>
+				<td><button class='change'>Change</button></td>
+				<td><button class='delete'>Delete</button></td>
+
+			</tr>
+
+			";
+
+		}
+	}
+	echo "</table>";
+}
+function isChecked($CheckBoxVal){
+	if($CheckBoxVal==1){
+		return 'checked';
+	}
+	return '';
+}
+/***********************************************
+Editting function Done
+***********************************************/
 function createPayroll($conn,$division){
 
 	$employeeEarningJSON = "";
 	$employeeDeductionJSON = "";
 
-	$sql = "SELECT `id`, `name`, `employeeNum`, `division`, `client`, `taxId`, `salary`, `civilStatus`, `dependent` FROM `employee_tbl` WHERE division = $division and active=1";
+	$sql = "SELECT `user_id`, CONCAT (last_name,', ',first_name,' ',middle_name,'.') as `name`, emp_no as `employeeNum`, division_id as `division`,monthly_rate as `salary`, civil_status as `civilStatus`, `dependents` FROM `tbl_user` WHERE division_id = $division and user_status=1";
 	$result = $conn->query($sql);//execute query
 	echo "
-	<table class='table table-striped'>
+	<table class='table table-striped payroll-data-table'>
 		<tr>
 			<th>Name</th>
 			<th>Employee Num</th>
 			<th>Division</th>
 			<th>BasicSalary</th>
-			<th>Tax Id</th>
 			<th>Civil Status</th>
-			<th>Dependents</th>
+			<th>Dependent/s</th>
 			<th>Earnings</th>
 			<th>Deductions</th>
+			<th>Leaves</th>
+			<th class='benifits sss closed'>SSS</th>
+			<th class='benifits phic closed'>PHIC</th>
+			<th class='benifits hdmf closed'>HDMF</th>
+			<th class='benifits riceSubsidy closed'>
+				<input type='checkbox' class='riceSubsidyValCB'>Rice Subsidy<br>
+				<input class='riceSubsidyVal closed' type=number value=0>
+			</th>
 			<th>Over time</th>
-			<th>Cash allowance</th>
+			<th>
+				<input type='checkbox' class='cashAllowanceValCB'>Cash allowance<br>
+				<input class='cashAllowanceVal closed' type=number value=0>
+			</th>
 		</tr>
 		";
 	if ($result->num_rows> 0) {
 		while($row = $result->fetch_assoc()) {
 
-			$id = $row["id"];
+			$id = $row["user_id"];
 			$name = $row["name"];
 			$employeeNum = $row["employeeNum"];
 			$division = $row["division"];
-			$client = $row["client"];
-			$taxId = $row["taxId"];
+//			$client = $row["client"];
 			$civilStatus = $row['civilStatus'];
-			$dependent = $row['dependent'];
+			$dependents = $row['dependents'];
 			$salary = $row["salary"];
 			$basicPay = $salary/2;
 			$taxStatus = "";
@@ -53,13 +265,15 @@ function createPayroll($conn,$division){
 					<td class='empNum'>$employeeNum</td>
 					<td class='division'>$division</td>
 					<td class='basicSalary'>$basicPay</td>
-					<td class='taxStatus'>$civilStatus</td>
 					<td class='civil'>$civilStatus</td>
-					<td class='dependent'>$dependent</td>
-
+					<td class='dependents'>$dependents</td>
 					<td class='earning'><button data-toggle='modal' data-target='#earning'>Add Earnings</button></td>
 					<td class='deduction'><button data-toggle='modal' data-target='#deduction'>Add Deduction</button></td>
-
+					<td class='leave'><button data-toggle='modal' data-target='#leave'>Add Leave</button></td>
+					<td class='benifits sss ease closed'><input type='checkbox' value=1></td>
+					<td class='benifits phic closed'><input type='checkbox' value=1></td>
+					<td class='benifits hdmf closed'><input type='checkbox' value=1></td>
+					<td class='benifits riceSubsidy closed'><input type='number' value=0></td>
 					<td class='overTime'><input type='number'></td>
 					<td class='cashAllowance'><input type='number'></td>
 				</tr>";
@@ -76,13 +290,15 @@ function createPayroll($conn,$division){
 
 	//	$cutoff = 
 }
-
+/***********************************************
+Editting function Done
+***********************************************/
 function getEmployeeList($conn,$division){
-	$sql = "SELECT * FROM `employee_tbl` WHERE division = $division";
+	$sql = "SELECT *, CONCAT (last_name,', ',first_name,' ',middle_name,'.') as name FROM `tbl_user` WHERE division_id = $division AND user_status=1";
 	$result = $conn->query($sql);//execute query
 	if ($result->num_rows> 0) {
 		while($row = $result->fetch_assoc()) {
-			$id = $row["id"];
+			$id = $row["user_id"];
 			$teamName = $row["name"];
 			echo "<input type='radio' name='team' value='$id'> $teamName<br>";
 			break;
@@ -91,19 +307,20 @@ function getEmployeeList($conn,$division){
 }
 
 function getSalaryDeductionFields($conn){
-	$sql = "SELECT id,name FROM `deduction_tbl` WHERE active = 1 AND inModal = 1";
+	$sql = "SELECT id,name,placeholder FROM `deduction_tbl` WHERE active = 1 AND inModal = 1";
 	$result = $conn->query($sql);//execute query
 	if ($result->num_rows> 0) {
 		while($row = $result->fetch_assoc()) {
 			$id = $row['id'];
 			$name = $row['name'];
+			$placeholder = $row['placeholder'];
 			$nameID = str_replace(' ', '',$name);
 			$tagName = str_replace(" ","_",$name);//replace space by underscore - for deductionlog_tbl
 			echo "
 				<div class='form-group'>
 					<label for='$nameID' class='col-sm-6 control-label text-left'>$name:</label>
 					<div class='col-sm-6'>
-						<input type='number' class='form-control' name='$tagName' min='0' id='$nameID'>
+						<input type='number' class='form-control' name='$tagName' id='$nameID' placeholder='$placeholder'>
 					</div>
 				</div>
 			";
@@ -131,8 +348,6 @@ function getSalaryAdditionFields($conn){
 		}
 	}
 }
-
-
 function getSSSContribution($salaryMonthly){
 	$additional = 0;
 	$salaryMax = 15750;
@@ -191,11 +406,11 @@ function getTax($totalEarnings, $totalDeductions, $taxStatus){
 	$salary = 0;
 	$salary = $totalEarnings-$totalDeductions;
 	switch($taxStatus){
-		case 1:{ $taxBracketToUse = $taxSM; }break;
-		case 2:{ $taxBracketToUse = $taxSMD1; }break;
-		case 3:{ $taxBracketToUse = $taxSMD2; }break;
-		case 4:{ $taxBracketToUse = $taxSMD3; }break;
-		case 5:{ $taxBracketToUse = $taxSMD4; }break;
+		case 0:{ $taxBracketToUse = $taxSM; }break;
+		case 1:{ $taxBracketToUse = $taxSMD1; }break;
+		case 2:{ $taxBracketToUse = $taxSMD2; }break;
+		case 3:{ $taxBracketToUse = $taxSMD3; }break;
+		case 4:{ $taxBracketToUse = $taxSMD4; }break;
 		default:{ $taxBracketToUse = $taxSMD4; }break;
 	}
 	for($i=count($taxBracketToUse)-1;$i>0;$i--){
@@ -204,11 +419,11 @@ function getTax($totalEarnings, $totalDeductions, $taxStatus){
 			break;
 		}
 	}
+	
 	$excessTax = ($salary-$taxBracketToUse[$j])*$deductionPercentageSet[$j];
 	$tax = $witholdingTax[$j]+$excessTax;
 	return $tax;
 }
-
 function updateDeduction($empNum,$payrollDate,$totalEarnings,$incomeTax,$monthlySalary,$sssNeeded,$phliHealthNeeded,$paigibigNeeded){
 	$baseSalary = $monthlySalary/2;
 	$sss = 0;

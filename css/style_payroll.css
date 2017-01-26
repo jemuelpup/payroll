@@ -1,0 +1,46 @@
+th input[type=number],
+td input[type=number]{
+	width: 100px;
+}
+
+
+.table>tbody>tr>th.benifits,
+.table>tbody>tr>td.benifits{
+	transition: width 1s;
+	width: 20px;
+	padding: auto 0;
+	text-align: center;
+	opacity: 1;
+	border-collapse: collapse;
+}
+.table>tbody>tr>th.benifits.closed,
+.table>tbody>tr>td.benifits.closed{
+	width: 0;
+	display: none;
+	border-collapse: collapse;
+}
+.riceSubsidyVal{
+	margin: 0 auto;
+}
+.riceSubsidyVal,
+.cashAllowanceVal{
+	display:block;
+}
+
+.riceSubsidyVal.closed,
+.cashAllowanceVal.closed{
+	display:none;
+}
+
+
+.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+	padding: 3px;
+	line-height: 1.42857143;
+	vertical-align: top;
+	border-top: 1px solid #ddd;
+}
+
+.table tr:hover{
+	background-color: rgba(51, 118, 183, 0.3)!important;
+}
+
