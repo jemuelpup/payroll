@@ -61,6 +61,8 @@ function getTeams($conn){
 		<meta charset="UTF-8">
 		<meta name="description" content="" />
 		<meta name="keywords" content="" />
+		<link rel="stylesheet" href="css/reset.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 		<link rel="stylesheet" href="style.css">
 	</head>
 	<body>
@@ -68,48 +70,145 @@ function getTeams($conn){
 			<p></p>
 		</div>
 	<main>
+		
 		<section class="sectionArea01 incomeMgmtArea">
-			<h2>Income management</h2>
-				<div class="sectionBlock01A">
-					<p>Income name <input type="text" class="incomeName" name="incomeName" placeholder="Income name"></p>
-					<p>Placeholder <input type="text" class="placeholder" name="placeholder" placeholder="placeholder"></p>
-					<input type="checkbox" name="inModal" class="inModal" value="1" checked>inModal<br>
-					<input type="checkbox" name="active" class="active" value="1" checked>active<br>
-					<select class="taxable">
-						<option value=0>Non taxable</option>
-						<option value=1>Taxable</option>
-					</select>
-					<button class="addIncomeFieldBtn">Add income field</button>
-					<button class="editIncomeField">Edit income field</button>
-					<button class="deleteIncomeField">Delete income field</button>
+			<div class="cotainer">
+				<div class="row">
+					<div class="col-md-4">
+						<h2>Income management</h2>
+						<div class="sectionBlock01A">
+							<p>Income name <input type="text" class="incomeName" name="incomeName" placeholder="Income name"></p>
+							<p>Placeholder <input type="text" class="placeholder" name="placeholder" placeholder="placeholder"></p>
+							<input type="checkbox" name="inModal" class="inModal" value="1" checked>inModal<br>
+							<input type="checkbox" name="active" class="active" value="1" checked>active<br>
+							<select class="taxable">
+								<option value=0>Non taxable</option>
+								<option value=1>Taxable</option>
+							</select>
+							<button class="addIncomeFieldBtn">Add income field</button>
+							<button class="editIncomeField">Edit income field</button>
+							<button class="deleteIncomeField">Delete income field</button>
 
-					<div class="incomeList dn">
-						<select class="incomeList">
-							<option value=0>Select income name</option>
-						</select>
+							<div class="incomeList dn">
+								<select class="incomeList">
+									<option value=0>Select income name</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-8">
+						<div class="sectionBlock01B">
+							<?php getIncomeFields($conn); ?>
+						</div>
+					</div>
+				<div class="row">
+			</div>
+		</section>
+		
+		<section class="deductionMgmt sectionArea02">
+			<div class="cotainer">
+				<div class="row">
+					<div class="col-md-4">
+						<div class="sectionBlock02A">
+							<div class="addNewSalaryDeduction">
+								<h2>addNewSalaryDeduction</h2>
+								<p>Deduction Name<input type="text" class="name" name="name" placeholder="name"></p>
+								<p>PlaceHolder<input type="text" class="placeholder" name="placeHolder" placeholder="name"></p>
+								<input type="checkbox" name="inModal" class="inModal" value="1" checked>inModal<br>
+								<input type="checkbox" name="active" class="active" value="1" checked>active<br>
+								<button class="addNewSalaryDeductionBtn">addNewSalaryDeduction</button>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-8">
+						<div class="sectionBlock02B">
+							<?php getDeductionFields($conn); ?>
+						</div>
 					</div>
 				</div>
-			<div class="sectionBlock01B">
-				<?php getIncomeFields($conn); ?>
 			</div>
-			
-			
 		</section>
-		<section class="deductionMgmt sectionArea02">
-			<div class="sectionBlock02A">
-				<div class="addNewSalaryDeduction">
-					<h2>addNewSalaryDeduction</h2>
-					<p>Deduction Name<input type="text" class="name" name="name" placeholder="name"></p>
-					<p>PlaceHolder<input type="text" class="placeholder" name="placeHolder" placeholder="name"></p>
-					<input type="checkbox" name="inModal" class="inModal" value="1" checked>inModal<br>
-					<input type="checkbox" name="active" class="active" value="1" checked>active<br>
-					<button class="addNewSalaryDeductionBtn">addNewSalaryDeduction</button>
+		<section class="table salaryMgmtArea">
+		<!--create a search here that shows the employees
+			Click employee information and redirect to a form that shows all his information
+			Edit the salary of that employee in that form then click update.
+			Record the update at salary_increase_log_tbl...-->
+			<table class="table table-striped employeeList">
+				<div class="cotainer">
+					<div class="row">
+						<div class="col-md-4">
+							<form class="searchEmployee">
+								<input class="search" type="text">
+								<button type="submit">Search</button>
+							</form>
+						</div>
+						<div class="col-md-8">
+							<tr>
+								<th>emp_no</th>
+								<th>first_name</th>
+								<th>middle_name</th>
+								<th>last_name</th>
+								<th>birth_date</th>
+								<th>age</th>
+								<th>user_status</th>
+								<th>employmentStatus</th>
+							</tr>
+						</div>
+					</div>
+				</div>
+			</table>
+		</section>
+		
+		<section class="roleMgmtArea">
+			<div class="cotainer">
+				<div class="row">
+					<div class="col-md-12">
+						<form class="roleMgmt">
+							<div class="col-md-2">
+								<input class='form-control' type='text' class='' name='role_title' maxlength='50' placeholder="Role title" required/>
+							</div>
+							<div class="col-md-2">
+								<select class='form-control' name='role_active'>
+									<option value='1' selected>Active</option>
+									<option value='0'>Inactive</option>
+								</select>
+							</div>
+							<button type="submit">Insert</button>
+						</form>
+					</div>
 				</div>
 			</div>
-			<div class="sectionBlock02B">
-				<?php getDeductionFields($conn); ?>
-			</div>
 		</section>
+		<p>
+			compute or review the following for exel report file:
+
+			1) tax status (done)
+			2) Original Hire Date (for phase one)
+			3) 2nd Month (done)
+			4) 3nd Month (done)
+			5) 5nd Month (done)
+			6) Promotion Date (done)
+			7) Role Title(based on your role) (done)
+			8) Role Level(get this from database) (done)
+			9) Division(get the name) (done)
+			10) Team(get the name) (done)
+			11) Other incomes...
+
+			Sick Leave
+
+			Taxable
+			Non-Taxable
+
+			Total Income
+			-Taxable
+			-Non-Taxable
+
+			total_taxable_income
+			total_non_taxable_income
+
+			35000-1118.8
+			
+		</p>
 	</main>
 		
 		
@@ -129,18 +228,50 @@ function getTeams($conn){
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script>
 $(document).ready(function(){
+	/* Adding employee roles */
+	$('.roleMgmt').submit(function(event){
+		event.preventDefault();
+		var allInputs = [];
+		$(this).find('input').map(function (i,e){
+			allInputs.push({
+				name: $(e).attr("name"),
+				type: $(e).attr("type"),
+				val: $(e).val()
+			});
+		});
+		$(this).find('select').map(function(i,e){
+			allInputs.push({
+				name: $(e).attr("name"),
+				type: "number",
+				val: $(e).val()
+			});
+		});
+		
+		$.ajax({
+			url: "functions.php",
+			type: 'POST',
+			data: { todo: "insertRole", data: allInputs},
+			success: function(result){
+//				console.log(result)
+			},
+			error: function () {
+				alert("Something wrong.");
+			}
+		});
+
+	});
 	
 	$(".addIncomeFieldBtn").click(function(){
-		var incomeName = $(".incomeMgmt .incomeName").val();
-		var taxable = $(".incomeMgmt .taxable").val();
-		var placeholder = $(".incomeMgmt .placeholder").val();
+		var incomeName = $(".incomeMgmtArea .incomeName").val();
+		var taxable = $(".incomeMgmtArea .taxable").val();
+		var placeholder = $(".incomeMgmtArea .placeholder").val();
 		
-		var inModal = $(".incomeMgmt .inModal").is(':checked') ? 1:0;
-		var active = $(".incomeMgmt .active").is(':checked') ? 1:0;
+		var inModal = $(".incomeMgmtArea .inModal").is(':checked') ? 1:0;
+		var active = $(".incomeMgmtArea .active").is(':checked') ? 1:0;
 		
 //		console.log("inModal"+inModal+"\nactive"+active);
 	
-		
+//		console.log("incomeName "+ incomeName+ "; taxable "+ taxable+ "; placeholder"+placeholder+"; inModal"+inModal+"; active"+active);
 		$.ajax({
 			url: "functions.php",
 			type: 'POST',
@@ -152,7 +283,7 @@ $(document).ready(function(){
 				alert("There's something wrong in the system. Call the support");
 			}
 		});
-		location.reload();
+//		location.reload();
 	});
 	
 	function printQuery(query){
@@ -178,7 +309,7 @@ $(document).ready(function(){
 				alert();
 			}
 		});
-		location.reload();
+//		location.reload();
 	});
 
 
@@ -232,7 +363,36 @@ $(document).ready(function(){
 			}
 		});
 	});
-
+// under development do click event here ad add the names of the employees found at the search box.
+	/* get the list of all the employees */
+	$(".searchEmployee").submit(function(event){
+		event.preventDefault();
+		$keyword = "";
+		$.ajax({
+			url: "functions.php",
+			type: 'POST',
+			data: { todo: "selectEmployeeRecords", data: $keyword},
+			success: function(result){
+				// create loop here
+				
+				
+				alert(result);
+			},
+			error: function() {//your error code
+				alert("There's something wrong in the system. Call the support");
+			}
+		});
+	});
+	$('.employeeList').append(`<tr>
+							  <th>emp_no</th>
+							  <th>first_name</th>
+							  <th>middle_name</th>
+							  <th>last_name</th>
+							  <th>birth_date</th>
+							  <th>age</th>
+							  <th>user_status</th>
+							  <th>employmentStatus</th>
+	</tr>`);
 				
 /************ SALARY JS IMPLEMENTATION ****************/
 

@@ -13,6 +13,29 @@ require('computations.php');
 		<link rel="stylesheet" href="jquery-ui-1.12.1.custom/jquery-ui.css">
 		<link rel="stylesheet" href="style.css">
 		<link rel="stylesheet" href="css/style_payroll.css">
+<!--	Other plugins -->
+		<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+		<style>
+			.off.available{
+				padding: 1px!important;
+			}
+			.table-condensed>thead>tr>th,
+			.table-condensed>tbody>tr>td{
+				padding: 0!important;
+			}
+			.daterangepicker .calendar th, .daterangepicker .calendar td {
+				min-width: 0;
+			}
+			.daterangepicker {
+				width: 445px!important;
+			}
+			.overTime input{
+				font-size: 10px;
+			}
+			.overTime .input-group{
+				width: 278px;
+			}
+		</style>
 	</head>
 	<body>
 	<!-- MODAL -->
@@ -98,7 +121,31 @@ require('computations.php');
 						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 					</div>
 				</form>
-
+			</div>
+		</div>
+		<!-- Overtime -->
+		<div class="modal fade" id="overTime" role="dialog">
+			<div class="modal-dialog">
+				<!-- Modal content-->
+				<form class="modal-content overtime-form">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">Overtime</h4>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-lg-12">
+								<?php overtimeForm(); ?>
+							</div>
+						</div>
+						
+					</div>
+					<div class="modal-footer">
+						<p class="dataRecordingConfirmation pull-left"></p>
+						<button type="submit" class="btn btn-default">Insert Overtime.</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
+				</form>
 			</div>
 		</div>
 	<!-- HEAD -->
@@ -114,6 +161,7 @@ require('computations.php');
 					<button class="viewPayslip pull-right mt-20 mr-5">View Payslip</button>
 					<button class="viewRecords pull-right mt-20 mr-5">View Records</button>
 					<button class="deleteRecord pull-right mt-20 mr-5">Delete Record</button>
+					<button class="tabledReport pull-right mt-20 mr-5">View Tabled Report</button>
 				</div>
 			</div>
 		</div>
@@ -131,18 +179,36 @@ require('computations.php');
 							<input type="checkbox" id="sss">SSS<br>
 							<input type="checkbox" id="philhealth">PHILHEALTH<br>
 							<input type="checkbox" id="pagibig">PAGIBIG<br>
-							<input type="checkbox" id="riceSubsidy">Rice Subsidy<br>
 						</div>
 						<?php createPayroll($conn,1); ?>
 					</div>
 				</div>
 			</div>
 		</section>
+		<p>
+			compute or review the following for exel report file:
+
+			1) tax status (done)
+			2) Original Hire Date (for phase one)
+			3) 2nd Month (done)
+			4) 3nd Month (done)
+			5) 5nd Month (done)
+			6) Promotion Date (done)
+			7) Role Title(based on your role)
+			8) Role Level(get this from database)
+			9) Division(get the name)
+			10) Team(get the name)
+			11) Other incomes...
+
+		</p>
 	</main>
 		
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<!--		other plugin -->
+		<script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+		<script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
 		<script src="js/main.js"></script>
 	</body>
 </html>

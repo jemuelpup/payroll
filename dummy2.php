@@ -1,42 +1,30 @@
-<?php
-
-function setTaxes($conn,$payrollDate,$department){
-	// Check if the payroll was created
-	$sql = "SELECT payrollDate  FROM `salarylog_tbl` WHERE payrollDate='$payrollDate'";
-	$result = $conn->query($sql);//execute query
-	if ($result->num_rows > 0) { // do you have records in database in this date?
-		// Get the fields
-		$sql = "SELECT name FROM `earning_tbl` WHERE taxable = 1 AND active = 1";
-		$earningFields = getFields($conn,$sql);
-		$sql = "SELECT name FROM `deduction_tbl` WHERE active = 1 AND taxDeductable = 1";
-		$deductionForTaxFields = getFields($conn,$sql);
-		// Get the emp number of the employees selected at employee_tbl
-		$sql = "SELECT id,dependent FROM `employee_tbl` WHERE division = $department AND active=1";
-		$result = $conn->query($sql);//execute query
-		if ($result->num_rows > 0) { // loop for updating
-			while($row = $result->fetch_assoc()) {
-				$empID = $row["id"];
-				$earningsForTax = 0;
-				$deductionForTax = 0;
-				$dependent = 0;
-				$tax = 0;
-				$dependent = (int)$row["dependent"];
-				$earningsForTax = getEarnings($conn,$earningFields,$empID,$payrollDate);
-				$deductionForTax = getDeductions($conn,$deductionForTaxFields,$empID,$payrollDate);
-				$tax = round(getTax($earningsForTax, $deductionForTax, $dependent), 2);
-				//				echo "$tax-";
-				$sql = "UPDATE `salarylog_tbl` SET `income_tax`=$tax WHERE employeeID = $empID AND payrollDate='$payrollDate'";
-				$conn->query($sql);
-
-				$sql = "INSERT INTO `earning_deduction_log_tbl`(`employeeID`, `earnings`, `tax`, `benifitDeduction`, `payrollDate`) VALUES ($empID,$earningsForTax,$tax,$deductionForTax,'$payrollDate') ON DUPLICATE KEY UPDATE `earnings` = $earningsForTax, `tax` = $tax, `benifitDeduction`=$deductionForTax";
-				$conn->query($sql);
-			}
-		}
-		echo "Payroll tax assignment done.";
-	}
-	else{
-		echo "No record found.";
-	}
-}
-
-?>
+<div class='form-group row'>
+	<label for='ot_hours' class='col-xs-3 col-form-label'>ot_hours</label>
+	<div class='col-xs-9'><input type='number' class='form-control' name='ot_hours' maxlength='11' required/></div>
+</div>
+<div class='form-group row'>
+	<label for='ot_timelog_id' class='col-xs-3 col-form-label'>ot_timelog_id</label>
+	<div class='col-xs-9'><input type='number' class='form-control' name='ot_timelog_id' maxlength='11' required/></div>
+</div>
+<div class='form-group row'>
+	<label for='ot_filing_date' class='col-xs-3 col-form-label'>ot_filing_date</label>
+	<div class='col-xs-9'><input type='text' class='form-control' name='ot_filing_date' maxlength='' required/></div>
+</div>
+<div class='form-group row'>
+	<label for='ot_date' class='col-xs-3 col-form-label'>ot_date</label>
+	<div class='col-xs-9'><input type='text' class='form-control' name='ot_date' maxlength='' required/></div>
+</div>
+<div class='form-group row'>
+	<label for='ot_reason' class='col-xs-3 col-form-label'>ot_reason</label>
+	<div class='col-xs-9'><input type='text' class='form-control' name='ot_reason' maxlength='' required/></div>
+</div>
+<div class='form-group row'>
+	<label for='ot_approveby_id' class='col-xs-3 col-form-label'>ot_approveby_id</label>
+	<div class='col-xs-9'><input type='number' class='form-control' name='ot_approveby_id' maxlength='11' required/></div>
+</div>
+<div class='input-group'>
+	<div class='input-group-addon'>
+		<i class='glyphicon glyphicon-calendar fa fa-calendar'></i>
+	</div>
+	<input type='text' class='form-control pull-right' name='daterange' value='Click Here To Input Date'>
+</div>

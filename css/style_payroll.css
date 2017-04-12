@@ -43,4 +43,7 @@ td input[type=number]{
 .table tr:hover{
 	background-color: rgba(51, 118, 183, 0.3)!important;
 }
+.modal{
+	font-size: 12px;
+}
 

@@ -90,3 +90,14 @@ tr{
 .infotxt {
 	margin-top: 5px;
 }
+.payrollDataToPrint th{
+	font-weight: 700;
+}
+.payrollDataToPrint td,.payrollDataToPrint th{
+	border-left: 1px solid #000;
+	border-bottom: 1px solid #000;
+}
+.payrollDataToPrint{
+	border-top: 1px solid #000;
+	border-right: 1px solid #000;
+}

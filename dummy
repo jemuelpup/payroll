@@ -1,4 +1,4 @@
-name -> first_name ,middle_name ,last_name
+name -> first_name +" middle_name +" last_name
 employeeNum -> emp_no
 division -> division_id
 client
@@ -8,4 +8,311 @@ dependent -> dependent
 active -> user_status
 hire_date
 regularization_date
-employmentStatus - employmentStatus : NEW
+employmentStatus - employmentStatus :"+ NEW
+
+
+
+'RegularHours'=>0+" 'OverTimeHours'=>0+" 'nighthiffHours'=>0+" RegularPay'=>0+" 'OverTimePay'=>0+" 'nighthiffPay'=>0+" 
+
+
+
+'RegularHours'=>0+" 
+'OverTimeHours'=>0+" 
+'nighthiffHours'=>0+" 
+RegularPay'=>0+" 
+'OverTimePay'=>0+" 
+'nighthiffPay'=>0+" 
+
+
+
+
+$timeReport = array(
+'RS'=>0+" 
+'RG_OT'=>0+" 
+'RS_RSF'=>0+" 
+'RS_OT'=>0+" 
+'RG_OT_NDC'=>0+" 
+'RG_OT_RDC'=>0+" 
+'RS_RSF_NDC'=>0+" 
+'RS_RSF_RDC'=>0+" 
+'RS_OT_NDC'=>0+" 
+'RS_OT_RDC'=>0+" 
+'RG_RSF_NDC_SH'=>0+" 
+'RG_RSF_NDC_RH'=>0+" 
+'RG_RSF_NDC_DH'=>0+" 
+'RG_RSF_RDC_SH'=>0+" 
+'RG_RSF_RDC_RH'=>0+" 
+'RG_RSF_RDC_DH'=>0+" 
+'RG_OT_NDC_SH'=>0+" 
+'RG_OT_NDC_RH'=>0+" 
+'RG_OT_NDC_DH'=>0+" 
+'RG_OT_RDC_SH'=>0+" 
+'RG_OT_RDC_RH'=>0+" 
+'RG_OT_RDC_DH'=>0+" 
+'RS_RSF_NDC_SH'=>0+" 
+'RS_RSF_NDC_RH'=>0+" 
+'RS_RSF_NDC_DH'=>0+" 
+'RS_RSF_RDC_SH'=>0+" 
+'RS_RSF_RDC_RH'=>0+" 
+'RS_RSF_RDC_DH'=>0+" 
+'RS_OT_NDC_SH'=>0+" 
+'RS_OT_NDC_RH'=>0+" 
+'RS_OT_NDC_DH'=>0+" 
+'RS_OT_RDC_SH'=>0+" 
+'RS_OT_RDC_RH'=>0+" 
+'RS_OT_RDC_DH'=>0);
+
+$sql = "INSERT INTO earning_deduction_log_tbl(employeeID, earnings, tax, benifitheduction, payrollDate,otherDeduction) VALUES ($empID,$allEarnings,$tax,$deductionForTax,'$payrollDate',$otherDeductions) ON DUPLICATE KEY UPDATE earnings = $allEarnings, tax = $tax, benifitheduction=$deductionForTax, otherDeduction=$otherDeductions";
+
+<label class='btn btn-primary'>
+<input type='radio' name='options' id='option2' autocomplete='off'> Radio 2
+</label>
+<label class='btn btn-primary'>
+<input type='radio' name='options' id='option3' autocomplete='off'> Radio 3
+</label>
+
+
+todo: "editheductionField"+" incomeName :"+ incomeName+" oldName :"+ oldName+" taxDeductable :"+ taxDeductable+" placeholder:placeholder+" inModal:inModal+" active:active+" dataID:dataID
+
+$baseSalary_Basic=0;
+$baseSalary_RetroAdjustment=0;
+$ExcessUnpaidLeaves=0;
+$overtime_Current=0;
+$overtime_RetroAdjustment=0;
+$nightDiff_Current=0;
+$nightDiff_RetroAdjustment=0;
+$LanguagePremium=0;
+$cashAllowances_Taxable=0;
+$riceSubsidy_NonTaxable=0;
+$thirteenthMonthPay_Taxable=0;
+$thirteenthMonthPay_NonTaxable=0;
+$performanceBonus_Taxable=0;
+$performanceBonus_NonTaxable=0;
+$vacationLeave_Taxable=0;
+$vacationLeave_NonTaxable=0;
+$SickLeave=0;
+$EmployeeReferralFee=0;
+$Incentive =0;
+$totalIncome_Taxable=0;
+$totalIncome_NonTaxable=0;
+$sssContribution_Employee=0;
+$sssContribution_Employer=0;
+$sssContribution_Total=0;
+$hdmpContribution_Employee=0;
+$hdmpContribution_Employer=0;
+$hdmpContribution_Total=0;
+$phicContribution_Employee=0;
+$phicContribution_Employer=0;
+$phicContribution_Total=0;
+$totalContribution_Employee=0;
+$totalContribution_Employer=0;
+$withholdingTax=0;
+$taxRefund=0;
+$SSSsalaryLoan=0;
+$HDMFMultipurposeLoan=0;
+$OtherDeductions=0;
+$TotalDeductions=0;
+$netPay=0;
+$finalNetPay=0;
+
+
+
+("Web Intergration"),1,1
+("Ecommerce"),1,1
+("BPO Voice Inbound"),1,1
+
+
+
+("Human Resource",1),
+("Accounting",1),
+("Digital Marketing",1)
+
+
+
+
+compute or review the following for exel report file:
+
+1) tax status (done)
+2) Original Hire Date (for phase one)
+3) 2nd Month (done)
+4) 3nd Month (done)
+5) 5nd Month (done)
+6) Promotion Date (done)
+7) Role Title(based on your role)
+8) Role Level(get this from database)
+9) Division(get the name)
+10) Team(get the name)
+11) Other incomes...
+
+
+
+
+SELECT
+(CASE WHEN lc.leave_earned>=5 THEN (u.monthly_rate * 12/ 261*5) ELSE (u.monthly_rate * 12/ 261*lc.leave_earned) END) as payment,
+u.user_id,
+(u.monthly_rate * 12/ 261) as daily_rate,
+lc.leave_earned
+FROM
+tbl_user u, tbl_leave_count lc
+WHERE
+u.regularization_date < NOW() and u.regularization_date != 0000-00-00 and
+lc.leave_id = 1 and lc.leave_user_id = u.user_id
+
+
+
+
+
+SELECT leave_user_id, sumsl, sumvl
+FROM
+(SELECT leave_user_id, sum(leave_earned) as sumvl FROM `tbl_leave_count` WHERE leave_id = 1 GROUP BY leave_user_id) as a  INNER JOIN
+(SELECT leave_user_id, sum(leave_earned) as sumsl FROM `tbl_leave_count` WHERE leave_id = 2 GROUP BY leave_user_id) as b ON leave_user_id = b.leave_user_id
+
+
+
+
+SELECT
+(
+CASE WHEN (lc.leave_earned-lc.leave_count)>=5
+THEN ROUND((u.monthly_rate * 12/ 261*5),2)
+ELSE ROUND((u.monthly_rate * 12/ 261*(lc.leave_earned-lc.leave_count)),2) END) as vleave_payment,
+u.user_id,
+(u.monthly_rate * 12/ 261) as daily_rate,
+lc.leave_earned
+FROM
+tbl_user u, tbl_leave_count lc
+WHERE
+u.regularization_date < NOW() and u.regularization_date != 0000-00-00 and
+lc.leave_id = 1 and lc.leave_user_id = u.user_id
+
+
+
+
+SELECT leave_user_id, sumsl, sumvl,
+CASE WHEN sumvl>=5
+THEN ROUND((u.monthly_rate * 12/261*5),2)
+ELSE ROUND((u.monthly_rate * 12/261*sumvl),2) END) as vleave_payment
+
+
+
+FROM
+(SELECT leave_user_id, (sum(leave_earned)-sum(leave_count)) as sumvl FROM `tbl_leave_count` WHERE leave_id = 1 GROUP BY leave_user_id) as a  INNER JOIN
+(SELECT leave_user_id, (sum(leave_earned)-sum(leave_count)) as sumsl FROM `tbl_leave_count` WHERE leave_id = 2 GROUP BY leave_user_id) as b ON leave_user_id = b.leave_user_id
+
+
+SELECT 
+a.employeeID, ROUND(DATEDIFF(CONCAT(YEAR(a.payrollDate),'-12-31'), a.payrollDate)/15) AS payrolls_left, a.base_salary, a.payrollDate
+FROM salarylog_tbl a
+INNER JOIN(
+SELECT employeeID, MAX(payrollDate),payrollDate
+FROM
+salarylog_tbl
+GROUP BY employeeID
+) b
+ON a.employeeID = b.employeeID AND a.payrollDate = b.payrollDate
+
+
+
+
+
+
+SELECT 
+a.employeeID, ROUND(DATEDIFF(CONCAT(YEAR(b.latest_payroll_date),'-12-31'), b.latest_payroll_date)/15) AS payrolls_left, b.base_salary, b.latest_payroll_date, b.ytd_salary
+FROM salarylog_tbl a
+INNER JOIN(
+SELECT employeeID, MAX(payrollDate) as latest_payroll_date,payrollDate,SUM(base_salary) as ytd_salary, base_salary
+FROM
+salarylog_tbl
+GROUP BY employeeID
+) b
+ON a.employeeID = b.employeeID AND a.payrollDate = b.latest_payroll_date
+
+
+
+
+
+SELECT leave_user_id, sumsl, sumvl,
+(CASE WHEN sumvl>=5
+THEN ROUND((u.monthly_rate * 12/261*5),2)
+ELSE ROUND((u.monthly_rate * 12/261*sumvl),2) END) as vleave_payment,
+(CASE WHEN sumvl>=5
+THEN ROUND((u.monthly_rate * 12/261*5),2)
+ELSE ROUND((u.monthly_rate * 12/261*sumsl),2) END) as sleave_payment
+
+FROM
+tbl_user u,
+(SELECT leave_user_id, (sum(leave_earned)-sum(leave_count)) as sumvl FROM `tbl_leave_count` WHERE leave_id = 1 GROUP BY leave_user_id) as a  INNER JOIN
+(SELECT leave_user_id, (sum(leave_earned)-sum(leave_count)) as sumsl FROM `tbl_leave_count` WHERE leave_id = 2 GROUP BY leave_user_id) as b 
+ON leave_user_id = b.leave_user_id
+WHERE
+u.regularization_date < NOW() and u.regularization_date != 0000-00-00 and leave_user_id = u.user_id
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

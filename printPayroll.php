@@ -49,12 +49,13 @@ GROUP BY leave_user_id
 	*/
 	
 	$payrollDate = $_GET["payrollDate"];
+	
+	
+	// add the  other features found at the notpad in your desktop
+	
 	$sql = "
-	SELECT e.user_id, e.emp_no, CONCAT (e.last_name,', ',e.first_name,' ',e.middle_name,'.') as name,ed.tax,(ed.benifitDeduction+ed.otherDeduction) as payrollDeduction, MAX(CASE WHEN lc.leave_id = 2 THEN lc.leave_count END) AS sickLeave, MAX(CASE WHEN lc.leave_id = 1 THEN lc.leave_count END) AS vacationLeave, (ed.earnings-ed.tax-ed.benifitDeduction-otherDeduction) AS netPay, (ed.tax+ed.benifitDeduction+otherDeduction) as totalDeduction, ed.earnings, s.*, lc.leave_earned FROM salarylog_tbl s INNER JOIN tbl_user e INNER JOIN tbl_leave_count lc INNER JOIN earning_deduction_log_tbl ed WHERE s.payrollDate='$payrollDate' AND ed.payrollDate='$payrollDate' AND e.user_id = s.employeeID AND e.user_id = ed.employeeID AND e.user_status=1 and lc.leave_user_id=e.user_id GROUP BY e.user_id, lc.leave_user_id";
+	SELECT e.user_id, e.emp_no, CONCAT (e.last_name,', ',e.first_name,' ',e.middle_name,'.') as name,ed.tax,(ed.benifitDeduction+ed.otherDeduction) as payrollDeduction, MAX(CASE WHEN lc.leave_id = 2 THEN lc.leave_count END) AS sickLeave, MAX(CASE WHEN lc.leave_id = 1 THEN lc.leave_count END) AS vacationLeave, (ed.earnings-ed.tax-ed.benifitDeduction-otherDeduction) AS netPay, (ed.tax+ed.benifitDeduction+otherDeduction) as totalDeduction, ed.earnings, s.*, lc.leave_earned ,ed.benifitDeduction FROM salarylog_tbl s INNER JOIN tbl_user e INNER JOIN tbl_leave_count lc INNER JOIN earning_deduction_log_tbl ed WHERE s.payrollDate='$payrollDate' AND ed.payrollDate='$payrollDate' AND e.user_id = s.employeeID AND e.user_id = ed.employeeID AND e.user_status=1 and lc.leave_user_id=e.user_id GROUP BY e.user_id, lc.leave_user_id";
 	
-	
-	
-
 	$result = $conn->query($sql);//execute query
 	if ($result->num_rows > 0) : // loop for updating
 		while($row = $result->fetch_assoc()) :
@@ -64,13 +65,15 @@ GROUP BY leave_user_id
 			$ytdEarnings = 0;
 			$ytdDeductions = 0;
 			$ytdTax = 0;
+			$benifitDeductions = 0;
 			$year = explode("-",$payrollDate)[0];
 			$sickLeave = $row["sickLeave"];
 			$vacationLeave = $row["vacationLeave"];
 			$leave_earned = $row['leave_earned'];
+			$benifitDeductions = $row['benifitDeduction'];
 
 
-			$sql2 = "SELECT sum(ed.earnings) AS ytdEarnings,sum(ed.tax) as ytdTax,ed.benifitDeduction,(sum(ed.benifitDeduction)+sum(ed.otherDeduction)) AS ytdAllDeductions FROM earning_deduction_log_tbl ed WHERE ed.employeeID=".$row['user_id']." AND YEAR('$payrollDate') = $year AND payrollDate <= '$payrollDate'";
+			$sql2 = "SELECT sum(ed.earnings) AS ytdEarnings,sum(ed.tax) as ytdTax,(sum(ed.benifitDeduction)) AS ytdAllDeductions FROM earning_deduction_log_tbl ed WHERE ed.employeeID=".$row['user_id']." AND YEAR('$payrollDate') = $year AND payrollDate <= '$payrollDate' ORDER BY ed.employeeID";
 			$result2 = $conn->query($sql2);//execute query
 			if ($result2->num_rows > 0) {// loop for updating
 				while($row2 = $result2->fetch_assoc()) {
@@ -79,6 +82,7 @@ GROUP BY leave_user_id
 					$ytdTax = $row2['ytdTax'];
 				}
 			}
+			
 ?>
 	<div class="innerWrap">
 		<div class="infoArea">
@@ -198,7 +202,7 @@ GROUP BY leave_user_id
 						</tr>
 						<tr>
 							<th class="w50">SSS, PHIC, HDMF</th>
-							<td class="w50"><?php echo $row["payrollDeduction"]; ?></td>
+							<td class="w50"><?php echo $benifitDeductions; ?></td>
 							<td class="w50 txt_bold"><?php echo $ytdDeductions; ?></td>
 						</tr>
 					</table>

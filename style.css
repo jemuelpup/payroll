@@ -1,8 +1,7 @@
 .dn{
 	display: none;
 }
-.incomeMgmtArea,
-.deductionMgmt{
+section{
 	border: 1px solid #000;
 	margin-top: 10px;
 	padding: 10px 20px;
@@ -27,12 +26,4 @@
 .sectionArea01,
 .sectionArea02{
 	overflow: hidden;
-}
-/* section area01 */
-.sectionBlock01A,
-.sectionBlock01B,
-.sectionBlock02A,
-.sectionBlock02B{
-	width: 50%;
-	float: left;
 }
