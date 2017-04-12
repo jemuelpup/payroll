@@ -662,13 +662,29 @@ function setTaxes($conn,$payrollDate,$department){
 				
 				
 				$sql = "INSERT INTO earning_deduction_log_tbl(employeeID, earnings, tax, benifitDeduction, payrollDate,otherDeduction) VALUES ($empID,$allEarnings,$tax,$deductionForTax,'$payrollDate',$otherDeductions) ON DUPLICATE KEY UPDATE earnings = $allEarnings, tax = $tax, benifitDeduction=$deductionForTax, otherDeduction=$otherDeductions";
-				
-				
-				
 				$conn->query($sql);
-				
 //				echo $sql.";";
 			}
+		}
+		/*******************************************
+		* if the date is between january 1-15,
+		* save the accumulated leave to the table tbl_yearly_leave_accumulated with the given (year-1)
+		* 
+		* 
+		* 
+		* 
+		* 
+		********************************************/
+		$dateDay = date('d', strtotime($payrollDate));
+		$dateMonth = date('m', strtotime($payrollDate));
+		if($dateDay<=15 and $dateDay>=1 and $dateMonth==1){
+			/*******************************************
+			* If the date is between january 1-15,
+			* if you already have the record in the table tbl_yearly_leave_accumulated with (year-1), terminate
+			* Save the accumulated leave to the table tbl_yearly_leave_accumulated with the given (year-1)
+			* In this date in your javascript, call the function to set the leaves as payment
+			* Add the button to pay the sl and vl
+			********************************************/
 		}
 		echo "Payroll tax assignment done.";
 	}

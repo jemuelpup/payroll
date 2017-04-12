@@ -179,6 +179,11 @@ require('computations.php');
 							<input type="checkbox" id="sss">SSS<br>
 							<input type="checkbox" id="philhealth">PHILHEALTH<br>
 							<input type="checkbox" id="pagibig">PAGIBIG<br>
+							
+							<input type="checkbox" id="thirteenthMonthPay">13th month pay<br>
+							<input type="checkbox" id="pagibig">PAGIBIG<br>
+							
+							
 						</div>
 						<?php createPayroll($conn,1); ?>
 					</div>
@@ -199,7 +204,7 @@ require('computations.php');
 			9) Division(get the name)
 			10) Team(get the name)
 			11) Other incomes...
-
+			
 		</p>
 	</main>
 		
